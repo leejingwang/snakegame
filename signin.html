@@ -20,9 +20,9 @@
 <body>
     <script type="text/javascript">
     Parse.initialize("myAppId");
-    Parse.serverURL="http://localhost:1337/parse";
+    Parse.serverURL="https://jingwangapp.herokuapp.com/parse";
     
-    function signup(){
+    var signup = function(){
       window.location ="signup.html";
     }
 
@@ -33,7 +33,7 @@
       Parse.User.logIn(id, password)
       .then((user) => {
         alert("Login Success : Welcome! " + user.get("username"));
-        window.location = "main.html";
+        window.location = "game1.html";
       },(error) => {
         alert("login error:" + error.message);
         $("#password").val("");
