@@ -1,0 +1,62 @@
+<!doctype html>
+<head>
+  <meta charset="utf-8">
+
+  <title>My Parse App</title>
+  <meta name="description" content="My Parse App">
+  <meta name="viewport" content="width=device-width">
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.3.1.min.js"></script>
+  
+  <!-- cdn version -->
+  <script type="text/javascript" src="https://npmcdn.com/parse@2.1.0/dist/parse.min.js"></script>
+  
+  <!-- file version -->
+  <!-- <script type="text/javascript" src="./js/parse.min.js"></script> -->
+  
+</head>
+
+<body>
+  
+  <div id="info">
+    <span id = "id"></span>
+    <input type = "button" value = "LOGOUT"
+    onclick = "logout()">
+  </div>
+
+  <h3>Collect Click Position Log</h3>
+  
+  <div id="log"></div>
+  
+  <script type="text/javascript">
+    Parse.initialize("myAppId");
+    Parse.serverURL = "http://localhost:1337/parse";
+
+    $(document).ready(function(){
+      if(!Parse.User.current()){
+        alert("Please after Login");
+        window.location = "signin.html";
+      }
+      else{
+        $("#id").html("Welcome "
+          + Parse.User.current().get("username"));
+        var ClickPosition = Pasrse.Object.extend("ClickPosition");
+        var query = new ClickPosition();
+
+        query.find()
+        .then((list) => {
+          var dataStr = "";
+          for(index in list){
+            var posStr = "X : " + list[index].get("posX") + " " + "Y : " + list[index].get("posX");
+            dataStr = dataStr + posStr
+            + " save success <br>";
+          }
+          $("#log").html(dataStr);
+        });
+      }
+    });
+  </script>
+</body>
+
+</html>
