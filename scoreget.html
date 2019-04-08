@@ -20,7 +20,7 @@
 <body>
     <script type="text/javascript">
     Parse.initialize("myAppId");
-    Parse.serverURL = "http://jingwangapp.herokuapp.com/parse";
+    Parse.serverURL = "https://jingwangapp.herokuapp.com/parse";
 
     var name;
     var score;
@@ -29,7 +29,7 @@
     var col;
     var snakegame = Parse.Object.extend("SnakeGame");
     var tot = new Parse.Query(snakegame);
-    var count
+    var count;
 
     tot.greaterThanOrEqualTo("score",0);
 tot.find()
