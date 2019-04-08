@@ -1,0 +1,227 @@
+
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"> 
+<HTML> 
+ <HEAD> 
+ <meta http-equiv="content-type" content="text/html; charset=ecukr">
+ <meta charset="utf-8">
+ <meta name="description" content="My Parse App">
+ <meta name="viewport" content="width=device-width">
+ <link rel="stylesheet" href="css/reset.css">
+ <link rel="stylesheet" href="css/styles.css">
+  <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.3.1.min.js"></script>
+ 
+ <!-- cdn version -->
+ <script type="text/javascript" src="https://npmcdn.com/parse@2.1.0/dist/parse.min.js"></script>
+  <TITLE>지렁이 게임</TITLE> 
+    <style> 
+    .block {width:25px;height:25px;border:solid 3;border-color:#999999;border-top-color:#ffffff;border-left-color:#ffffff} 
+    .onblock {width:25px;height:25px;border:solid 2;border-color:#CC0000;background-color:red;} 
+    .hblock{width:25px;height:25px;border:solid 2;border-color:#0033CC;background-color:blue;} 
+    .nblock{width:25px;height:25px;border:solid 2;border-color:#339900;background-color:#33CC33;} 
+    .xblock{width:25px;height:25px;border:solid 2;border-color:#000000;background-color:#000000;} 
+    </style> 
+
+ </HEAD> 
+ <BODY onload="" onkeydown="game_key(event)"> 
+        <script type = "text/javascript"> 
+     Parse.initialize("myAppId");
+     Parse.serverURL = "https://localhost:1337/parse";
+     var Snakesc = new Parse.Object.extend("SnakeGame");
+     var snaketot = new Snakesc();
+
+                var set_row=10; 
+                var set_col=10; 
+                var direction="t"; 
+                var sn = new Array(); 
+                var newblock = new snake(0,0); 
+                var cnt = 0; 
+                var timerid=0; 
+                var set_xblock=0; 
+                var ticker=0; 
+                var score;
+                var playername;
+                var thespeed;
+                 
+                function snake(x,y,st){ 
+                    this.x=x; 
+                    this.y=y; 
+                    this.st=st; 
+                } 
+
+ 
+                function snake_rand(max){ 
+                    rand=0; 
+                    while(rand==0)rand=(Math.floor(Math.random()*max)); 
+                    return rand; 
+                } 
+        
+                function make_new(){ 
+                    while(1){ 
+                        x=snake_rand(set_col+1); 
+                        y=snake_rand(set_row+1); 
+                        tempname = eval("game.block_"+x+"_"+y+""); 
+                        if(tempname.className=="block"){ 
+                            tempname.className="nblock"; 
+                            break; 
+                        } 
+                    } 
+                    newblock.x = x; 
+                    newblock.y = y; 
+                } 
+        
+                function display(s,st){ 
+                    tempname = eval("game.block_"+s.x+"_"+s.y+""); 
+                    tempname.className = st; 
+                } 
+
+                function game_timer(){ 
+                     
+                    ticker++; 
+                     
+                    if(cnt>=1){ 
+                        display(sn[cnt],"block"); 
+                        for (i=cnt;i>=1;i--) 
+                        {     
+                            sn[i].x = sn[i-1].x; 
+                            sn[i].y = sn[i-1].y;                 
+                            display(sn[i],"onblock"); 
+                        } 
+                    } 
+    
+                    if(direction=="t")sn[0].y--; 
+                    if(direction=="b")sn[0].y++; 
+                    if(direction=="l")sn[0].x--; 
+                    if(direction=="r")sn[0].x++; 
+                     
+                    if(sn[0].x<=0 || sn[0].y<=0 || sn[0].y>set_row || sn[0].x>set_col){game_end(); return false;} 
+                    tempname = eval("game.block_"+sn[0].x+"_"+sn[0].y+""); 
+                     
+                    if(tempname.className=="nblock"){ 
+                        cnt++; 
+                        sn[cnt] = new snake(sn[cnt-1].x,sn[cnt-1].y); 
+                        display(sn[cnt],"onblock"); 
+                        make_new(); 
+        
+                    }else if(tempname.className!="block"){ 
+                        game_end(); return false; 
+                    } 
+                     
+                    score = (cnt*10+set_xblock*100+ticker)-511
+                    game.gp.value=(cnt*10+set_xblock*100+ticker)-511; 
+        
+                    display(sn[0],"hblock"); 
+                     
+                    turm = 800-cnt*20; 
+                    if(turm<200)turm=200;
+                    thespeed = 78000/turm;
+                    game.speed.value = 78000/turm; 
+                    timerid=setTimeout("game_timer()",turm); 
+                } 
+        
+                function make_map(){ 
+                    temp=""; 
+                    for(y=1;y<=set_row;y++){ 
+                        for(x=1;x<=set_col;x++){ 
+                            temp+=("<input type=button name='block_"+x+"_"+y+"' class='block'>"); 
+                        } 
+                        temp+=("<br>"); 
+                    } 
+                    return temp; 
+                } 
+                 
+                function game_key(event){ 
+                    if(event.keyCode==37)direction="l"; 
+                    if(event.keyCode==38)direction="t"; 
+                    if(event.keyCode==39)direction="r"; 
+                    if(event.keyCode==40)direction="b"; 
+                } 
+                function game_start(){
+                    playername = $("#playername").val();
+                    set_col = game.game_col.value*1; 
+                    set_row = game.game_row.value*1; 
+                    set_xblock = game.game_xblock.value*1; 
+                    ticker=0; 
+                    newblock.x=0; 
+                    newblock.y=0; 
+                    sn[0]=new snake(5,5); 
+                    sn[1]=new snake(5,6); 
+                    cnt = 1; 
+                    map = make_map(); 
+                    document.getElementById("game_div").innerHTML=map; 
+                    game_timer(); 
+                    make_new(); 
+                    make_xblock(); 
+                } 
+        
+                function make_xblock(){ 
+                    check=1; 
+                    while(set_xblock>=check){ 
+                        x=snake_rand(set_col-1)+1; 
+                        y=snake_rand(set_row-1)+1; 
+                        xbox=new snake(x,y); 
+                        tempname = eval("game.block_"+x+"_"+y+""); 
+                        if(tempname.className=="block"){ 
+                            display(xbox,"xblock"); 
+                            check++; 
+                        } 
+                    } 
+                } 
+        
+                function game_end(){ 
+                    game.gdata.value="����:"+game.game_col.value+",����:"+game.game_row.value+",��ֹ�:"+game.game_xblock.value+",����:"+cnt+",�ð�:"+ticker; 
+                    clearTimeout(timerid);
+                    snaketot.set("name",playername);
+                    snaketot.set("row",set_row);
+                    snaketot.set("col",set_col);
+                    snaketot.set("score",score);
+                    snaketot.set("speed",thespeed);
+                    snaketot.save()
+                    .then((score) => {alert("게임 끝");},
+                    (error)=>{alert("결과 저장 에러"+error.message);});
+                } 
+                var point = function(){
+                    window.location = "scoreget.html";
+                }
+            </script>
+
+ <form name=game method="post"> 
+<INPUT TYPE="hidden" NAME="gid" value="snake"> 
+<input type="hidden" name="gdata" value=""> 
+<input type="hidden" name="gpoint" value=""> 
+
+ <TABLE border=1 align=center>
+     <tr>
+         <td>
+             <h2>playername</h2><input type = "text" id = "playername">
+         </td>
+     </tr>
+ <TR> 
+    <TD> 가로<input name=game_row value=10 size=3> 
+            세로<input name=game_col value=10 size=3> 
+            장애물<input name=game_xblock value=5 size=3><INPUT TYPE="button" VALUE="게임시작" ONCLICK="game_start()"></TD> 
+ </TR> 
+ <TR> 
+        <TD align=center>     
+            <div id="game_div">         
+            <script> 
+            for(y=1;y<=set_row;y++){ 
+                for(x=1;x<=set_col;x++){ 
+                    document.write("<input type=button name='block_"+x+"_"+y+"' class='block'>"); 
+                } 
+                document.write("<br>"); 
+            } 
+            </script> 
+            </div> 
+        </TD> 
+ </TR> 
+ <TR> 
+    <TD align=center>점수<input name=gp value=0 size=3 readonly>속도<input name=speed value=0 size=3 readonly> </TD> 
+ </TR>
+ <tr>
+     <td><input type = "button" value = "점수보기" onclick = "point()"></td>
+ </tr>
+ </TABLE> 
+ </form> 
+ </BODY> 
+</HTML> 

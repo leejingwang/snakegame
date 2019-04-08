@@ -1,0 +1,56 @@
+<!doctype html>
+<head>
+  <meta charset="utf-8">
+
+  <title>지렁이 게임 점수</title>
+  <meta name="description" content="My Parse App">
+  <meta name="viewport" content="width=device-width">
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/styles.css">
+   <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.3.1.min.js"></script>
+  
+  <!-- cdn version -->
+  <script type="text/javascript" src="https://npmcdn.com/parse@2.1.0/dist/parse.min.js"></script>
+
+  <!-- file version -->
+  <!-- <script type="text/javascript" src="./js/parse.min.js"></script> -->
+  
+</head>
+
+<body>
+    <script type="text/javascript">
+    Parse.initialize("myAppId");
+    Parse.serverURL = "http://localhost:1337/parse";
+
+    var name;
+    var score;
+    var speed;
+    var row;
+    var col;
+    var snakegame = Parse.Object.extend("SnakeGame");
+    var tot = new Parse.Query(snakegame);
+    var count
+
+    tot.greaterThanOrEqualTo("score",0);
+tot.find()
+.then((asdf)=>{
+  for(var i = 0; i < asdf.length;i++){
+    count = asdf[i];
+    name = count.get("name");
+    score = count.get("score");
+    speed = count.get("speed");
+    row = count.get("row");
+    col = count.get("col");
+    alert("이름:" + name + " 가로:" + row + " 세로:" + col + " 점수:" + score + " 속도" + speed);
+  }
+}
+);
+var game = function (){
+  window.location = "game1.html"
+}
+
+  </script>
+  <input type = "button" value = "게임하러가기" onclick = "game()">
+</body>
+
+</html>
