@@ -1,1 +1,1 @@
-<?php header('Location:/game1.html');?>
+<?php header('Location:/signup.html');?>
