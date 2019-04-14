@@ -43,20 +43,20 @@
                 var playername;
                 var thespeed;
                  
-                function snake(x,y,st){ 
+                var snake = function(x,y,st){ 
                     this.x=x; 
                     this.y=y; 
                     this.st=st; 
                 } 
 
  
-                function snake_rand(max){ 
+                var snake_rand = function(max){ 
                     rand=0; 
                     while(rand==0)rand=(Math.floor(Math.random()*max)); 
                     return rand; 
                 } 
         
-                function make_new(){ 
+                var make_new = function(){ 
                     while(1){ 
                         x=snake_rand(set_col+1); 
                         y=snake_rand(set_row+1); 
@@ -70,12 +70,12 @@
                     newblock.y = y; 
                 } 
         
-                function display(s,st){ 
+                var display = function(s,st){ 
                     tempname = eval("game.block_"+s.x+"_"+s.y+""); 
                     tempname.className = st; 
                 } 
 
-                function game_timer(){ 
+                var game_timer = function(){ 
                      
                     ticker++; 
                      
@@ -119,7 +119,7 @@
                     timerid=setTimeout("game_timer()",turm); 
                 } 
         
-                function make_map(){ 
+                var make_map = function(){ 
                     temp=""; 
                     for(y=1;y<=set_row;y++){ 
                         for(x=1;x<=set_col;x++){ 
@@ -130,13 +130,13 @@
                     return temp; 
                 } 
                  
-                function game_key(event){ 
+                var game_key = function(event){ 
                     if(event.keyCode==37)direction="l"; 
                     if(event.keyCode==38)direction="t"; 
                     if(event.keyCode==39)direction="r"; 
                     if(event.keyCode==40)direction="b"; 
                 } 
-                function game_start(){
+                var game_start = function(){
                     playername = $("#playername").val();
                     set_col = game.game_col.value*1; 
                     set_row = game.game_row.value*1; 
@@ -154,7 +154,7 @@
                     make_xblock(); 
                 } 
         
-                function make_xblock(){ 
+                var make_xblock = function (){ 
                     check=1; 
                     while(set_xblock>=check){ 
                         x=snake_rand(set_col-1)+1; 
@@ -168,7 +168,7 @@
                     } 
                 } 
         
-                function game_end(){ 
+                var game_end = function(){ 
                     game.gdata.value="����:"+game.game_col.value+",����:"+game.game_row.value+",��ֹ�:"+game.game_xblock.value+",����:"+cnt+",�ð�:"+ticker; 
                     clearTimeout(timerid);
                     snaketot.set("name",playername);
